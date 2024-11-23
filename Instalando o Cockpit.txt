@@ -1,4 +1,4 @@
-                Para instalar o Cockpit no servidor:
+                Para instalar o Cockpit no servidor: DEBIAN 12.7.0
 
     1. sudo apt -y install cockpit <= Este comando instala o Cockpit no sistema.
     2. cd /lib/systemd/system <= Este comando navega até o diretório onde os arquivos de configuração de serviços do systemd estão localizados.
@@ -9,8 +9,7 @@
     6. sudo systemctl restart cockpit.socket <= Este comando reinicia o serviço cockpit.socket para aplicar as mudanças feitas no arquivo de configuração.
     • Explicação: Após modificar a configuração da porta no arquivo cockpit.socket, você precisa reiniciar o serviço para que as mudanças tenham efeito. O systemctl restart reinicia o serviço cockpit.socket e faz com que ele comece a escutar na nova porta definida (neste caso, na porta 9090).
 
-    • Pronto seu cockpit, já está funcionando na porta que alterou ou na porta padrão
-    • https://IP_DO_SERVIDOR:9090/ <=para acessar o cockpit no servidor
+    • Pronto seu cockpit, já está funcionando.
 
 Comando:
 
@@ -19,7 +18,10 @@ Comando:
     2. sudo systemctl stop cockpit.socket  <= Este comando interrompe imediatamente o serviço cockpit.socket.
     • Explicação: O systemctl stop é usado para parar um serviço em execução no sistema, neste caso, o cockpit.socket, o que significa que a interface gráfica do Cockpit não estará mais acessível até que o serviço seja reiniciado.
     3. sudo systemctl restart cockpit.socket  <= Este comando reinicia o serviço cockpit.socket.
+    • Explicação:  O comando reinicia o serviço de rede (socket) que permite ao Cockpit funcionar corretamente, especialmente quando você acessar o painel web do Cockpit para gerenciar e monitorar o sistema.
     4. sudo systemctl start cockpit.socket  <= Este comando inicia o serviço cockpit.socket.
     • Explicação: O systemctl start é utilizado para iniciar um serviço que não está em execução. Neste caso, ele iniciaria o cockpit.socket, permitindo que o Cockpit seja acessado pela interface web.
+
+    • https://IP_DO_SERVIDOR:9090/ <= refere-se ao endereço URL para acessar a interface web do Cockpit, que é uma ferramenta de administração para sistemas Linux. 
 
     • Observação: Esses comandos são essenciais para gerenciar o funcionamento do Cockpit de forma eficiente e para garantir que ele esteja disponível sempre que necessário, seja manualmente iniciado ou automaticamente iniciado na inicialização do sistema.
