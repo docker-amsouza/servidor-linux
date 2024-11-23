@@ -16,17 +16,14 @@
 
     • Pronto seu cockpit, já está funcionando.
 
-Comando:
+Comandos:
 
     1. sudo systemctl enable cockpit.socket <= Este comando habilita o serviço cockpit.socket para que ele seja iniciado automaticamente na inicialização do sistema. 
-    • Explicação: O systemctl enable cria links simbólicos para o serviço no diretório /etc/systemd/system/ que indicam que o serviço deve ser iniciado automaticamente quando o sistema for iniciado.
     2. sudo systemctl stop cockpit.socket  <= Este comando interrompe imediatamente o serviço cockpit.socket.
-    • Explicação: O systemctl stop é usado para parar um serviço em execução no sistema, neste caso, o cockpit.socket, o que significa que a interface gráfica do Cockpit não estará mais acessível até que o serviço seja reiniciado.
     3. sudo systemctl restart cockpit.socket  <= Este comando reinicia o serviço cockpit.socket.
-    • Explicação:  O comando reinicia o serviço de rede (socket) que permite ao Cockpit funcionar corretamente, especialmente quando você acessar o painel web do Cockpit para gerenciar e monitorar o sistema.
     4. sudo systemctl start cockpit.socket  <= Este comando inicia o serviço cockpit.socket.
-    • Explicação: O systemctl start é utilizado para iniciar um serviço que não está em execução. Neste caso, ele iniciaria o cockpit.socket, permitindo que o Cockpit seja acessado pela interface web.
+    5. sudo systemctl status cockpit.socket <= Este comando exibe o status do serviço cockpit.socket.
 
-    • https://IP_DO_SERVIDOR:9090/ <= refere-se ao endereço URL para acessar a interface web do Cockpit, que é uma ferramenta de administração para sistemas Linux. 
+    • https://IP_DO_SERVIDOR:9090/ <= refere-se ao endereço URL para acessar a interface web do Cockpit.
 
     • Observação: Esses comandos são essenciais para gerenciar o funcionamento do Cockpit de forma eficiente e para garantir que ele esteja disponível sempre que necessário, seja manualmente iniciado ou automaticamente iniciado na inicialização do sistema.
