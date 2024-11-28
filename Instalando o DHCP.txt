@@ -1,0 +1,78 @@
+Instalando e configurando o serviço DHCP no Debian server ou Ubuntu server
+
+    • O que é DHCP: DHCP (Dynamic Host Configuration Protocol) é um protocolo de gestão de redes que atribui endereços IP e outros parâmetros de comunicação a dispositivos conectados a uma rede.
+
+    • Instalação do serviço DHCP: apt -y install isc-dhcp-server
+
+    • Explicação do comando: apt -y install isc-dhcp-server
+    • apt: É o gerenciador de pacotes usado em distribuições Linux baseadas em Debian para instalar, atualizar e remover softwares.
+    • -y: Essa opção responde automaticamente "sim" a todas as perguntas durante a instalação. Sem essa opção, o processo de instalação pode exigir confirmação manual.
+    • install: Indica que você deseja instalar um pacote.
+    • isc-dhcp-server: É o nome do pacote que será instalado.
+
+    1. Após a instalação do serviço, antes de configurar o servidor DHCP e necessário informar qual interface de rede que o servidor DHCP usará para ouvir as solicitações DHCP, entre em: 
+
+    • vi /etc/default/isc-dhcp-server e encontre a seguinte linha:
+    • INTERFACESv4="eth0" <= aqui deverá informar a interface de rede.
+
+    2. Diretório dos arquivos de configuração do ISC DHCP Server: 
+
+    • cd /etc/dhcp/
+
+    • Configurando o servidor DHCP:
+
+    1. Antes de efetuar a configuração do escopo, faça um backup: sudo cp dhcpd.conf dhcpd.conf.bkp
+   
+    • Explicação do comando: sudo cp dhcpd.conf dhcpd.conf.bkp
+    • sudo: Permite executar o comando com privilégios administrativos (superusuário), necessário porque o arquivo dhcpd.conf geralmente requer permissões de administrador para leitura e escrita.
+    • cp: É o comando que copia arquivos ou diretórios no Linux.
+    • dhcpd.conf: Nome do arquivo de configuração original que você deseja copiar.
+    • dhcpd.conf.bkp: Nome do arquivo de destino, que será a cópia de segurança do arquivo original. A extensão .bkp é convencionalmente usada para indicar que é um backup.
+
+    2. Vamos editar o arquivo dhcpd.conf: sudo vi dhcpd.conf
+
+    • Explicação do comando:
+    • sudo: Executa o comando com privilégios administrativos (superusuário), necessário para editar arquivos protegidos, como os de configuração do servidor DHCP.
+    • vi: É o editor de texto nativo do Unix/Linux. Ele é poderoso, mas pode ser um pouco desafiador para iniciantes, já que funciona em modos diferentes.
+    • dhcpd.conf: É o arquivo de configuração principal do servidor ISC DHCP Server.
+
+    3. Dentro do arquivo: dhcpd.conf, irá descomentar e editar os seguintes dados: 
+
+  	# ddns-update-style none;                                           <= Indica que o servidor DHCP não deve atualizar dinamicamente o DNS.
+  	# option domain-name "exemple.org";                                 <= Define o nome de domínio padrão que será atribuído globalmente.
+  	# option domain-name-servers ns1.example.org, ns2.example.org;      <= Lista os servidores DNS primário e secundário que serão atribuídos aos clientes.
+  	# authoritative;                                                    <= Declara que este servidor DHCP é o principal para a rede.
+	# default-lease-time 600;                                           <= Define o tempo de lease padrão  (600 segundos) para os IPs concedidos aos clientes.
+	# max-lease-time 7200;                                              <= Estabelece o tempo máximo de lease (7200 segundos).
+
+    4. Abaixo da linha: A slightly different configuration for an internal subnet. Irá descomentar e preencher seu escopo:
+
+	# subnet 10.5.5.0 netmask 255.255.255.224 {                      <= Define a sub-rede que o servidor DHCP gerencia.
+ 	# range 10.5.5.26 10.5.5.30;                                     <= Especifica o intervalo de endereços IP que podem ser atribuídos dinamicamente pelo servidor DHCP.
+ 	# option domain-name-servers ns1.internal.example.org;           <= Configura o servidor DNS primário que será atribuído aos clientes.
+ 	# option domain-name "exemple.org";                              <= Especifica o nome de domínio para os dispositivos da sub-rede.
+ 	# option subnet-mask 255.255.255.224;                            <= Reafirma a máscara de sub-rede para os clientes DHCP.
+ 	# option routers 10.5.5.1;                                       <= Define o gateway padrão da rede, para que os dispositivos saibam por onde acessar outras redes.
+ 	# option broadcast-address 10.5.5.31;                            <= Configura o endereço de broadcast para a sub-rede.
+	#}
+
+    5. Caso queira declarar os clientes na alocação de endereços IP, deverá repetir o processo para cada cliente, segue abaixo um exemplo:
+
+host amsouza {                                      <= Define o nome do host (no caso, amsouza), usado para identificação no arquivo de configuração.
+	hardware  thernet  dd:cc:00:bb:aa:11;           <= Especifica o endereço MAC (também chamado de endereço físico) do dispositivo.
+	fixed-address 10.5.5.30;                        <= Define o endereço IP fixo que será atribuído ao dispositivo com o endereço MAC especificado.
+}
+
+
+    6. Comandos úteis:
+
+    • systemctl start isc-dhcp-server           <= Após configurar, você pode iniciar o servidor.
+    • systemctl stop isc-dhcp-server            <= É usado para parar o serviço do ISC DHCP Server no sistema. 
+    • systemctl restart isc-dhcp-server         <= Reiniciar o servidor após alterações.
+    • systemctl enable isc-dhcp-server          <= Para garantir que ele inicie automaticamente ao ligar o sistema
+    • systemctl status isc-dhcp-server          <= Verificar o status do serviço DHCP.
+    • cat dhcpd.conf                            <= Visualizar o conteúdo de dhcpd.conf.
+    • sudo dhcpd -t                             <= O comando verifica a validade do arquivo dhcpd.conf.
+    • sudo cp dhcpd.conf.bkp dhcpd.conf         <= Restaurar o backup.
+    • diff dhcpd.conf dhcpd.conf.bkp            <= Verificar as diferenças entre o original e o backup (opcional).
+
