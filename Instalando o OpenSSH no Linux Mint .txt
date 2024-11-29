@@ -30,7 +30,7 @@ Instalando o OpenSSH no Linux Mint
     7. Comandos úteis:
 
     • systemctl status ssh      <= Exibe o status atual do serviço ssh.
-    • systemctl enable ssh      <=  Habilita o serviço ssh para iniciar automaticamente durante o boot do sistema.
+    • systemctl enable ssh      <= Habilita o serviço ssh para iniciar automaticamente durante o boot do sistema.
     • systemctl start ssh       <= Inicia o serviço ssh imediatamente.
-    • systemctl stop ssh        <=  Para o serviço ssh imediatamente.
+    • systemctl stop ssh        <= Para o serviço ssh imediatamente.
     • systemctl restart ssh     <= Reinicia o serviço ssh.
