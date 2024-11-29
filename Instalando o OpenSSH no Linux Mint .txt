@@ -1,0 +1,36 @@
+Instalando o OpenSSH no Linux Mint 
+
+    1. Abra o Terminal: Faremos isso por meio da linha de comando, então comece abrindo um terminal. Você pode encontrar o ícone do terminal na barra de tarefas em uma instalação GUI padrão, conforme mostrado abaixo.
+
+    2. Instale o servidor OpenSSH: No terminal, execute o seguinte comando como root para instalar o pacote do servidor OpenSSH.
+
+    • Observação: Você deve fazer isso com privilégios de root, caso contrário, você receberá a seguinte mensagem de erro: E: Não foi possível abrir o arquivo de bloqueio /var/lib/dpkg/lock - aberto (13: Permissão negada). Você pode se tornar root executando 'sudo su', seguido de sua senha. Por padrão, a primeira conta que você cria quando instala o Linux Mint deve ser capaz de se tornar root.
+
+    • apt-get install openssh-server -y     <= O comando é usado para instalar o OpenSSH Server em sistemas Linux baseados no Debian/Ubuntu.
+
+    Explicação do comando: apt-get install openssh-server -y
+    
+    • O comando apt-get é uma ferramenta de gerenciamento de pacotes que permite instalar, atualizar, remover ou pesquisar pacotes de software no sistema. Função no comando: Indica que estamos usando o sistema de gerenciamento de pacotes APT (Advanced Package Tool).
+    • O comando install instrui o apt-get a instalar o pacote especificado. Função no comando: Solicita a instalação do pacote openssh-server no sistema.
+    • O comando openssh-server é o pacote que contém o servidor SSH baseado em OpenSSH. Configura o sistema para aceitar conexões SSH. Permite acesso remoto seguro via protocolo SSH, protegendo a comunicação com criptografia. Após a instalação, o serviço geralmente inicia automaticamente e fica ouvindo na porta 22 (por padrão). Uso típico: Facilitar a administração remota de servidores ou sistemas sem a necessidade de acesso físico.
+    • A opção -y significa "yes" (sim). Aceita automaticamente todos os prompts de confirmação durante a instalação. Economiza tempo em cenários onde você já sabe que quer prosseguir.
+
+    3. Verifique o status do OpenSSH: Uma vez instalado, o SSH deve ser configurado automaticamente para iniciar na inicialização do sistema e já estar em execução. Claro que verificaremos isso em vez de apenas presumir!
+
+    4. Podemos usar 'systemctl is-enabled' como mostrado abaixo para verificar se o ssh está habilitado para iniciar automaticamente na inicialização do sistema. Se ele retornar com 'enabled', o SSH deve iniciar automaticamente na inicialização. Se estiver desabilitado, você pode executar 'systemctl enable ssh' para habilitar a inicialização na inicialização do sistema.
+
+    • systemctl is-enabled ssh  <= Verifica se o serviço ssh está configurado para iniciar automaticamente no boot.
+
+    5. Podemos então usar 'systemctl is-active' como mostrado abaixo para verificar se o ssh está ativo e em execução no momento. Se ele retornar com 'active', então o SSH está em execução no momento. Se não estiver em execução, você pode executar 'systemctl start ssh' para iniciá-lo.
+
+    • systemctl is-active ssh   <= Verifica se o serviço ssh está ativo no momento.
+
+    6. Também podemos usar 'systemctl status' para obter uma visão geral rápida de todas as informações. No exemplo abaixo, podemos ver que ele está em execução ativa, bem como várias informações úteis sobre o serviço. Podemos então usar 'systemctl is-active' como mostrado abaixo para verificar se o ssh está ativo e em execução no momento. Se ele retornar com 'active', então o SSH está em execução no momento. Se não estiver em execução, você pode executar 'systemctl start ssh' para iniciá-lo.
+
+    7. Comandos úteis:
+
+    • systemctl status ssh      <= Exibe o status atual do serviço ssh.
+    • systemctl enable ssh      <=  Habilita o serviço ssh para iniciar automaticamente durante o boot do sistema.
+    • systemctl start ssh       <= Inicia o serviço ssh imediatamente.
+    • systemctl stop ssh        <=  Para o serviço ssh imediatamente.
+    • systemctl restart ssh     <= Reinicia o serviço ssh.
