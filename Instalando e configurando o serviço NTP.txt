@@ -1,0 +1,47 @@
+Instalando e configurando o serviço NTP no Ubuntu 24.10 desktop
+
+    • O que é NTP: NTP (Network Time Protocol) é um protocolo de rede usado para sincronizar os relógios de computadores em uma rede.
+    
+    • Observação: Necessário fazer login como ROOT. Para logar no terminal como ROOT, entre no terminal, e de o comando:        sudo su => após irá solicitar a sua senha de acesso.
+    
+    • O que é Chrony: O Chrony é uma implementação moderna do Network Time Protocol (NTP) usada para sincronizar o relógio de computadores com precisão em redes locais ou pela Internet. 
+        
+    • Instalação do serviço NTP: apt install chrony -y
+    
+    • Explicação do comando: apt install chrony -y
+    • apt: É o gerenciador de pacotes usado para instalar, atualizar e gerenciar software em sistemas baseados em Debian.
+    • install: Indica que você deseja instalar um pacote.
+    • chrony: Especifica o pacote que será instalado. O Chrony é uma alternativa ao tradicional.
+    • -y: Automatiza o processo de instalação, assumindo "sim" para todas as confirmações necessárias, como baixar e instalar pacotes e dependências.
+    
+    1. Após a instalação do serviço, antes de configurar o serviço NTP, recomendo efetuar um backup do arquivo: ubuntu-ntp-pools.sources
+    
+    • Diretório dos arquivos de configuração do CHRONY: cd /etc/chrony/sources.d/
+    • Comando para efetuar uma copia do arquivo: cp ubuntu-ntp-pools.sources ubuntu-ntp-pools.sources.bkp
+    • Dentro do arquivo ubuntu-ntp-pools.sources, irei editar o meu servidor de horário, com o comando: 
+    vi ubuntu-ntp-pools.sources, caso queira o padrão NÃO ALTERE.
+    
+     Irei comentar os servidores padões e adicionar a linha apontando para o meu servidor:
+     14 #pool ntp.ubuntu.com        iburst maxsources 4
+     15 #pool 0.ubuntu.pool.ntp.org iburst maxsources 1
+     16 #pool 1.ubuntu.pool.ntp.org iburst maxsources 1
+     17 #pool 2.ubuntu.pool.ntp.org iburst maxsources 2
+     18 server <NOME ou IP do seu SERVIDOR> iburst maxsources 1
+     
+    • Explicação do : server iburst maxsources 1
+    • server: Define o servidor NTP ao qual o Chrony vai se conectar para sincronizar o relógio do sistema.
+    • iburst: A opção iburst acelera o processo de sincronização inicial com o servidor NTP.
+    • maxsources 1: Limita o número de fontes NTP que o Chrony pode usar simultaneamente para sincronização.
+
+    2. Comandos Básicos:
+    
+    • systemctl restart chrony => Reinicia o serviço Chrony.
+    • systemctl status chrony => Exibe o status atual do serviço Chrony.
+    • systemctl stop chrony => Para o serviço Chrony.
+    • systemctl enable chrony => Configura o Chrony para iniciar automaticamente na inicialização do sistema.
+    • systemctl start chrony => Inicia o serviço Chrony.
+    • chronyc sourcestats => É utilizado para exibir estatísticas detalhadas sobre as fontes de tempo que o Chrony está utilizando para sincronizar o relógio do sistema.
+    
+    3. Possíveis erros:
+    
+    • systemctl daemon-reload => Recarrega a configuração de todas as unidades de serviço no systemd.
