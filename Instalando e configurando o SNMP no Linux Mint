@@ -1,0 +1,25 @@
+    Instalando e configurando o SNMP no Linux Mint / Debian / Ubuntu
+
+1. Atualizar o sistema:
+    sudo apt update
+    sudo apt upgrade
+
+2. Instalar o pacote SNMP:
+    sudo apt install snmp snmpd
+
+3. Configurar o SNMP:
+    sudo cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.bak       # Efetue uma copía do arquivo, antes de editar.
+    sudo vi /etc/snmp/snmpd.conf
+
+    #agentaddress  127.0.0.1,[::1]                              # Comente ou apague essa linha.
+    rocommunity public <IP_SNMP>                                # Adicione o IP do seu SNMP_SERVER.
+
+4. Comandos Básicos:
+    sudo systemctl restart snmpd                                # Reiniciar o serviço snmpd.
+    sudo systemctl status snmpd                                 # Verificar o status do serviço snmpd.
+    sudo systemctl stop snmpd                                   # Parar o serviço snmpd.
+    sudo systemctl enable snmpd                                 # Habilitar o serviço snmpd para iniciar automaticamente na inicialização do sistema.
+    sudo systemctl start snmpd                                  # Iniciar o serviço snmpd.
+    
+
+
