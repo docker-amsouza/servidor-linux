@@ -1,0 +1,50 @@
+                Configurar como Servidor de Arquivos: Debian server 12_8
+
+ Usando o Samba (para redes Windows/Linux)
+
+    1. Instale o Samba:
+
+!sudo apt install samba -y
+
+    2. Configure o Samba e edite o arquivo de configuração do Samba:
+
+!sudo vi /etc/samba/smb.conf
+    
+    Nota: Efetue um backup antes de editar o arquivo: cp /etc/samba/smb.conf /etc/samba/smb.conf.bkp
+
+Adicione uma seção para compartilhamento:
+
+![Shared]                        # Nome da pasta compartilhada.
+!path = /srv/samba/shared        # Define o caminho do diretório que será compartilhado.
+!browseable = yes                # Permite que o compartilhamento seja visível ao navegar pela rede.
+!writable = yes                  # Permite escrita no compartilhamento.
+!create mask = 0775              # Define as permissões padrão para arquivos criados (leitura/escrita para dono e grupo, leitura para outros).
+!directory mask = 0775           # Define as permissões padrão para diretórios criados (leitura/escrita/executável para dono e grupo, leitura/executável para outros).
+!valid users = @users            # Restringe o acesso ao grupo users.
+!log level = 3                   # Define o nível de detalhamento das mensagens de log geradas pelo Samba.
+
+    3. Crie o diretório de compartilhamento, ajustar permissões e criar os usuários:
+
+!sudo mkdir -p /srv/samba/shared                    # Cria o diretório, garantindo que o caminho completo seja criado caso ele não exista.
+!sudo chown :users /srv/samba/shared                # Altera o grupo do diretório para users
+!sudo chmod 775 /srv/samba/shared                   # Define permissões para que: O proprietário e o grupo tenham leitura, gravação e execução. Outros usuários tenham apenas leitura e execução.
+
+!sudo adduser <nome_do_usuario>                         # Substitua <nome_do_usuario> pelo nome desejado. Siga as instruções e configure uma senha para o usuário.
+!sudo usermod -aG users <nome_do_usuario>               # Cria e adiciona o usuário ao grupo users (caso o grupo seja usado para o compartilhamento).
+!sudo smbpasswd -e <nome_do_usuario>                    # Certifique-se de que o usuário está ativo no Samba.
+!smbclient //localhost/shared -U <nome_do_usuario>      # Peça ao usuário para acessar o compartilhamento com as credenciais configuradas.
+
+No Windows, isso pode ser feito pelo Explorador de Arquivos com \\<ip_do_servidor>\shared.
+No Linux, use o smbclient //<ip_do_servidor>/shared.
+
+    Notas: /srv/samba/shared      # "svr" é o nome do servidor e "shared" é o nome da pasta compartilhada, altere de acordo com o seu ambiente.
+
+    4. Comandos do serviço:
+
+!sudo systemctl restart smbd             # Reinicia o serviço Samba.
+!sudo systemctl start smbd               # Inicia o serviço Samba se ele não estiver rodando.
+!sudo systemctl enable smbd              # Configura o Samba para iniciar automaticamente quando o sistema for inicializado.
+!sudo systemctl stop smbd                # Para o serviço Samba.
+!sudo systemctl status smbd              # Exibe o estado atual do serviço Samba, mostrando informações como se ele está ativo, o tempo de execução e erros (se houver).
+!sudo journalctl -u smbd                 # Para investigar problemas, você pode verificar os logs do Samba.
+!testparm                                # Use o comando abaixo para garantir que o arquivo smb.conf não tem erros.
