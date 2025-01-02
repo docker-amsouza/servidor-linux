@@ -56,7 +56,7 @@ subnet 192.168.20.0 netmask 255.255.255.0 {                # Define a sub-rede e
 
 host gateway-vl20 {                                        # Define uma entrada para um host específico no servidor DHCP e pode ser qualquer nome descritivo.
 	 hardware ethernet 00:25:64:8d:45:93;                  # Especifica que o dispositivo será identificado pelo seu endereço MAC (endereço físico da interface de rede).
-	 fixed-address 172.180.20.1;                           # Define um IP estático para o dispositivo. Isso significa que, sempre que o dispositivo com o endereço MAC.
+	 fixed-address 192.168.20.1;                           # Define um IP estático para o dispositivo. Isso significa que, sempre que o dispositivo com o endereço MAC.
 }
 
 # Configuração da sub-rede para VLAN 30
@@ -72,7 +72,7 @@ subnet 192.168.30.0 netmask 255.255.255.0 {                # Define a sub-rede e
 
 host gateway-vl30 {                                        # Define uma entrada para um host específico no servidor DHCP e pode ser qualquer nome descritivo.
 	 hardware ethernet 00:25:64:8d:45:93;                  # Especifica que o dispositivo será identificado pelo seu endereço MAC (endereço físico da interface de rede).
-	 fixed-address 172.180.30.1;                           # Define um IP estático para o dispositivo. Isso significa que, sempre que o dispositivo c
+	 fixed-address 192.168.30.1;                           # Define um IP estático para o dispositivo. Isso significa que, sempre que o dispositivo c
 }
 
         4. Subindo os containers com docker-compose e comandos básicos:
