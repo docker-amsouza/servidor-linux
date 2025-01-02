@@ -1,0 +1,98 @@
+                             Subindo um servidor DHCP com Vlan's no docker-compose
+
+        Estrutura do projeto:
+
+dhcp_server/
+├── docker-compose.yml
+├── data/
+│   ├── dhcpd.conf
+│   ├── dhcpd.leases
+│   ├── dhcpd.leases~
+
+
+    Notas: 
+    Os nomes e endereços IP apresentados são apenas exemplos. Em um ambiente de produção, utilize os valores apropriados de acordo com a configuração da rede local.
+    Caso utilize o Switch Cisco Catalyst Express 500 Series, em Smartports, utilize a opção 'Other' para a porta conectada à VLAN.
+
+        1. Comando para criar a estrutura de diretórios e arquivos:
+
+sudo mkdir -p ~/dhcp_server/data                                   # Cria a estrutura de diretórios.
+cd ~/dhcp_server                                                   # Navega para o diretório dhcp_server.
+sudo touch data/dhcpd.conf data/dhcpd.leases data/dhcpd.leases~    # Arquivos usados pelo DHCP para registrar concessões de IP.
+sudo touch docker-compose.yml leases leases_eno20 leases_eno30     # Arquivos de estado adicionais para monitoramento (opcional).
+ls -R                                                              # Lista recursivamente a estrutura criada para verificar.
+
+        a. Garanta que o usuário ou processo que executará o container tem as permissões adequadas:
+
+sudo chown -R root:root ~/dhcp_server                      # Altera o proprietário e o grupo de todos os arquivos e subdiretórios dentro de ~/dhcp_server para root.
+sudo chmod -R 644 ~/dhcp_server/data/*                     # Permite leitura e escrita apenas para o dono, e leitura para os outros usuários.
+sudo chmod 755 ~/dhcp_server/data                          # Permite leitura, escrita e execução para o dono, e apenas leitura e execução para os outros.
+
+        2. Dentro do diretório cd ~/dhcp_server execute esse comando: sudo vi docker-compose.yml
+
+services:
+  dhcp_server:
+    image: networkboot/dhcpd                               # Imagem Docker do servidor DHCP.
+    container_name: dhcp_server                            # Nome do container.
+    volumes:                                               # Monta os diretórios e arquivos necessários dentro do container:
+      - ./data:/data                                       # Monta o diretório de dados no container.        
+      - ./data/dhcpd.conf:/etc/dhcp/dhcpd.conf             # Monta o arquivo de configuração DHCP no local correto dentro do container.
+      - ./data:/var/lib/dhcp                               # Monta o diretório de leases no container.
+    network_mode: "host"                                   # Necessário para que o DHCP opere diretamente na rede do host.
+    restart: always                                        # Configuração para reiniciar automaticamente o container em caso de falhas ou reinício do sistema.
+
+	    3. Dentro do diretório cd ~/dhcp_server/data execute esse comando: sudo vi dhcpd.conf
+
+# Configuração da sub-rede para VLAN 20
+subnet 192.168.20.0 netmask 255.255.255.0 {                # Define a sub-rede e a máscara.
+    range 192.168.20.1 192.168.20.254;                     # Define o intervalo de IPs disponíveis para concessão.
+    option routers 192.168.20.1;                           # Define o gateway padrão da VLAN.
+    option interface-mtu 1472;                             # Configura o MTU da interface (opcional).
+    option broadcast-address 192.168.20.255;               # Define o endereço de broadcast da sub-rede.
+    option ntp-servers a.ntp.br;                           # Configura o servidor NTP para sincronização de horário.
+    option domain-name-servers 8.8.8.8 1.0.0.2;            # Define os servidores DNS.
+    deny unknown-clients;                                  # Recusa concessões para dispositivos desconhecidos, somente clientes configurados (opcional).
+}
+
+host gateway-vl20 {                                        # Define uma entrada para um host específico no servidor DHCP e pode ser qualquer nome descritivo.
+	 hardware ethernet 00:25:64:8d:45:93;                  # Especifica que o dispositivo será identificado pelo seu endereço MAC (endereço físico da interface de rede).
+	 fixed-address 172.180.20.1;                           # Define um IP estático para o dispositivo. Isso significa que, sempre que o dispositivo com o endereço MAC.
+}
+
+# Configuração da sub-rede para VLAN 30
+subnet 192.168.30.0 netmask 255.255.255.0 {                # Define a sub-rede e a máscara.
+    range 192.168.30.1 192.168.30.254;                     # Define o intervalo de IPs disponíveis para concessão.
+    option routers 192.168.30.1;                           # Define o gateway padrão da VLAN.
+    option interface-mtu 1472;                             # Configura o MTU da interface (opcional).
+    option broadcast-address 192.168.30.255;               # Define o endereço de broadcast da sub-rede.
+    option ntp-servers a.ntp.br;                           # Configura o servidor NTP para sincronização de horário.
+    option domain-name-servers 8.8.8.8 1.0.0.2;            # Define os servidores DNS.
+    deny unknown-clients;                                  # Recusa concessões para dispositivos desconhecidos, somente clientes configurados (opcional).
+}
+
+host gateway-vl30 {                                        # Define uma entrada para um host específico no servidor DHCP e pode ser qualquer nome descritivo.
+	 hardware ethernet 00:25:64:8d:45:93;                  # Especifica que o dispositivo será identificado pelo seu endereço MAC (endereço físico da interface de rede).
+	 fixed-address 172.180.30.1;                           # Define um IP estático para o dispositivo. Isso significa que, sempre que o dispositivo c
+}
+
+        4. Subindo os containers com docker-compose e comandos básicos:
+    
+sudo docker-compose up -d                               # Inicia os containers definidos no arquivo docker-compose.yml em modo detached (-d), ou seja, em segundo plano.
+sudo docker-compose down                                # Para e remove todos os containers, redes e volumes criados pelo comando docker-compose up.
+sudo docker-compose restart                             # Para reiniciar os containers sem precisar interromper ou remover a configuração.
+sudo docker-compose restart dhcp_server                 # Para reiniciar apenas o container dhcp-server.
+sudo docker-compose stop                                # Para parar os containers definidos no docker-compose.yml sem removê-los.
+sudo docker-compose stop dhcp_server                    # Para parar apenas o container dhcp-server.
+sudo docker-compose ps                                  # Para verificar o status dos containers em execução.
+sudo docker logs dhcp_server                            # Este comando exibe os logs do container dhcp-server.
+sudo docker logs -f dhcp_server                         # Este comando permitirá que você veja as entradas de log à medida que são registradas.
+sudo dhcpd -t -cf /caminho/para/seu/dhcpd.conf          # Verifica se o arquivo de configuração do DHCP (dhcpd.conf) está correto e sem erros de sintaxe.
+sudo docker network inspect vlan20_net                  # Inspeciona a rede Docker chamada vlan20_net, mostrando informações detalhadas sobre a rede.
+sudo docker network inspect vlan30_net                  # Inspeciona a rede Docker chamada vlan30_net, mostrando informações detalhadas sobre a rede.
+
+        5. Como Interpretar:
+
+DHCPDISCOVER                                               # Um dispositivo enviou uma solicitação para obter um endereço IP.
+DHCPOFFER                                                  # O servidor DHCP ofereceu um endereço IP ao dispositivo.
+DHCPREQUEST                                                # O dispositivo aceitou a oferta e solicitou o endereço IP específico.
+DHCPACK                                                    # O servidor DHCP confirmou a alocação do IP ao dispositivo.
