@@ -1,0 +1,64 @@
+            Criando e configurando VLAN's no Servidor Linux geralmente: Debian/Ubuntu
+
+sudo ip link add link eno1 name eno1.10 type vlan id 10     # Criação da subinterface VLAN 10.
+sudo ip link set eno1.10 up                                 # Ativar a subinterface eno1.10.
+ip a show eno1.10                                           # Verificar a configuração da subinterface eno1.10.
+
+sudo ip link add link eno1 name eno1.20 type vlan id 20     # Criação da subinterface VLAN 20.
+sudo ip link set eno1.20 up                                 # Ativar a subinterface eno1.20.
+ip a show eno1.20                                           # Verificar a configuração da subinterface eno1.20.
+
+sudo ip link add link eno1 name eno1.30 type vlan id 30     # Criação da subinterface VLAN 30.
+sudo ip link set eno1.30 up                                 # Ativar a subinterface eno1.30.
+ip a show eno1.30                                           # Verificar a configuração da subinterface eno1.30.
+   
+    Nota:
+        Essa configuração é usada para definir a configuração de interfaces de rede VLAN:
+        Caminho para configuração: cd /etc/network 
+                                   sudo vi interfaces
+
+
+allow-hotplug eno1.10                                               # Detecta automaticamente quando a interface é conectada.
+iface eno1.10 inet static                                           # Configuração estática de IP.
+    address 192.168.10.1                                            # Atribui o IP 192.168.10.1 à interface.
+    netmask 255.255.255.0                                           # Máscara de rede: 255.255.255.0.
+    network 192.168.10.0                                            # Endereço de rede: 192.168.10.0.
+    broadcast 192.168.10.255                                        # Endereço de broadcast: 192.168.10.255.
+    post-up ethtool -s eno1.10 speed 100 duplex full autoneg off    # Configura a interface para 100Mbps, full-duplex, sem negociação automática.
+
+
+allow-hotplug eno1.20                                               # Detecta automaticamente quando a interface é conectada.
+iface eno1.20 inet static                                           # Configuração estática de IP.
+    address 192.168.20.1                                            # Atribui o IP 192.168.20.1 à interface.
+    netmask 255.255.255.0                                           # Máscara de rede: 255.255.255.0.
+    network 192.168.20.0                                            # Endereço de rede: 192.168.20.0.
+    broadcast 192.168.20.255                                        # Endereço de broadcast: 192.168.20.255 (corrigido, antes estava 172.180.20.255).
+    post-up ethtool -s eno1.20 speed 100 duplex full autoneg off    # Configura a interface para 100Mbps, full-duplex, sem negociação automática.
+
+allow-hotplug eno1.30                                               # Detecta automaticamente quando a interface é conectada.
+iface eno1.30 inet static                                           # Configuração estática de IP.
+    address 192.168.30.1                                            # Atribui o IP 192.168.30.1 à interface.
+    netmask 255.255.255.0                                           # Máscara de rede: 255.255.255.0.
+    network 192.168.30.0                                            # Endereço de rede: 192.168.30.0.
+    broadcast 192.168.30.255                                        # Endereço de broadcast: 192.168.30.255.
+    post-up ethtool -s eno1.30 speed 100 duplex full autoneg off    # Configura a interface para 100Mbps, full-duplex, sem negociação automática.
+
+
+    Nota:
+       Após realizar as configurações, você pode usar o seguinte comando para verificar as interfaces e garantir que os endereços IP e as configurações estejam corretos.
+       ip a ou ip address, isso deve retornar algo similar a:
+
+   eno1.10@eno1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether <ENDEREÇO MAC> brd ff:ff:ff:ff:ff:ff
+    inet 192.168.10.1/24 brd 192.168.10.255 scope global eno1.10
+       valid_lft forever preferred_lft forever
+
+   eno1.20@eno1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether <ENDEREÇO MAC> brd ff:ff:ff:ff:ff:ff
+    inet 192.168.20.1/24 brd 192.168.20.255 scope global eno1.20
+       valid_lft forever preferred_lft forever
+
+   eno1.30@eno1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether <ENDEREÇO MAC> brd ff:ff:ff:ff:ff:ff
+    inet 192.168.30.1/24 brd 192.168.30.255 scope global eno1.30
+       valid_lft forever preferred_lft forever
