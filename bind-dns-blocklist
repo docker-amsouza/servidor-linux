@@ -1,0 +1,120 @@
+Estrutura de diretórios:
+bind-dns-blocklist/
+├── zones/
+│   └── db.blocked
+└── named.conf.local
+
+zones/db.blocked
+; Zona para bloquear sites (genérico)
+$TTL 86400
+@       IN SOA   ns.block.local. root.ns.block.local. (
+        2025092201 ; Serial
+        604800     ; Refresh
+        86400      ; Retry
+        2419200    ; Expire
+        86400 )    ; Negative Cache TTL
+;
+@       IN      NS      localhost.
+@       IN      A       127.0.0.1
+*       IN      A       127.0.0.1   ; Redireciona todos os subdomínios para localhost
+
+named.conf.local (exemplo de lista de bloqueio)
+zone "pornhub.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "xvideos.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "xnxx.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "redtube.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "youjizz.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "tube8.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "pornhubpremium.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "xhamster.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "tnaflix.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "spankwire.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "xvideos2.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "extremetube.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "porntube.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "beeg.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "keezmovies.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "efukt.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "nuvid.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "redtubepremium.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "porn.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
+
+zone "xart.com" {
+    type master;
+    file "/etc/bind/zones/db.blocked";
+};
