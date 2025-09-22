@@ -1,14 +1,22 @@
+# bind-dns-blocklist
+
+Configuração de blocklist DNS com BIND9 para bloquear domínios indesejados.
+Todos os domínios apontam para 127.0.0.1.
+
+--------------------------------------------------
 Estrutura de diretórios:
+
 bind-dns-blocklist/
 ├── zones/
 │   └── db.blocked
 └── named.conf.local
 
+--------------------------------------------------
 zones/db.blocked
-; Zona para bloquear sites (genérico)
+
 $TTL 86400
 @       IN SOA   ns.block.local. root.ns.block.local. (
-        2025092201 ; Serial
+        2025092201 ; Serial   ; ⚠️ Sempre incremente o Serial ao atualizar este arquivo
         604800     ; Refresh
         86400      ; Retry
         2419200    ; Expire
@@ -18,7 +26,9 @@ $TTL 86400
 @       IN      A       127.0.0.1
 *       IN      A       127.0.0.1   ; Redireciona todos os subdomínios para localhost
 
+--------------------------------------------------
 named.conf.local (exemplo de lista de bloqueio)
+
 zone "pornhub.com" {
     type master;
     file "/etc/bind/zones/db.blocked";
@@ -118,3 +128,47 @@ zone "xart.com" {
     type master;
     file "/etc/bind/zones/db.blocked";
 };
+
+--------------------------------------------------
+Como usar o bind-dns-blocklist
+
+Usuário que já tem o BIND9 instalado:
+
+1. Vá para o diretório do BIND:
+   cd /etc/bind/
+
+2. Crie a pasta zones/ (se não existir) e copie db.blocked para dentro:
+   mkdir -p zones
+   cp /caminho/do/repositorio/db.blocked zones/
+
+3. Edite named.conf.local e inclua os domínios que deseja bloquear:
+   zone "xvideos.com" {
+       type master;
+       file "/etc/bind/zones/db.blocked";
+   };
+
+4. Reinicie o serviço BIND:
+   systemctl restart bind9
+
+5. Teste a resolução dos domínios bloqueados:
+   dig @127.0.0.1 xvideos.com
+
+Usuário que ainda não tem o BIND9 instalado:
+
+1. Instale o BIND9 (Debian/Ubuntu, como root):
+   apt update
+   apt install bind9 bind9utils bind9-doc -y
+
+2. Verifique se o serviço está ativo:
+   systemctl status named
+   systemctl restart bind9
+
+3. Copie os arquivos do repositório (zones/ e named.conf.local) para /etc/bind/ e siga os passos acima.
+
+--------------------------------------------------
+Dicas:
+
+- Sempre incremente o Serial no db.blocked ao modificar o arquivo.
+- Para facilitar a manutenção de muitos domínios, crie um arquivo separado (blocklist.conf) e inclua no named.conf.local:
+  include "/etc/bind/zones/blocklist.conf";
+- Teste sempre a resolução local com dig antes de aplicar em produção.
